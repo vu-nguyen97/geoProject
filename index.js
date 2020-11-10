@@ -25,10 +25,13 @@ const locations = [
   { id: 23, lat: 21.032488, lng: 105.7825654 }
 ];
 
-let map, infoWindow;
+var map, infoWindow;
+var coordinatesOfMapCenter = {};
+var transitLayer = null;
+var zoom = 16
+const myLatlng = { lat: 20.99, lng: 105.823 };
+
 function initMap() {
-  var zoom = 16
-  const myLatlng = { lat: 20.99, lng: 105.823 };
   var mapOptions = {
     zoom,
     minZoom: zoom - 12,
@@ -45,6 +48,8 @@ function initMap() {
     });
     markers.push(marker)
   })
+
+  transitLayer = new google.maps.TransitLayer();
 
   // ============================================================================
 
@@ -69,6 +74,9 @@ function initMap() {
 
   // ============================================================================
   map.addListener('idle', function(ev){
+    coordinatesOfMapCenter['lat'] = map.getCenter().lat();
+    coordinatesOfMapCenter['lng'] = map.getCenter().lng();
+    
     setTimeout(() => {
       var bounds = map.getBounds();
       var limitedLng = {
@@ -226,7 +234,7 @@ function initMap() {
   // go to location of user
   infoWindow = new google.maps.InfoWindow();
   const locationButton = document.createElement("button");
-  locationButton.textContent = "Pan to Current Location";
+  locationButton.textContent = "Current Location";
   locationButton.classList.add("custom-map-control-button");
   map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButton);
   locationButton.addEventListener("click", () => {

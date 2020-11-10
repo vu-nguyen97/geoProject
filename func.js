@@ -5,21 +5,21 @@ function findPropertyInMap(type) {
   if (isActived) {
     typeActived.style.color = "black"
     document.getElementById("right-panel").style.display = "none"
-    clearMarkers(type)
-    return
-  }
 
-  if (type == 'transit') {
-    const transitLayer = new google.maps.TransitLayer();
-    if (transitLayer) {
-      
+    if (type == 'transit') {
+      transitLayer.setMap(null);
+    } else {
+      clearMarkers(type)
     }
-    transitLayer.setMap(map);
-    console.log('transit')
     return
   }
 
   typeActived.style.color = "red"
+  if (type == 'transit') {
+    transitLayer.setMap(map);
+    return
+  }
+
   document.getElementById("right-panel").style.display = "block"
   let getNextPage;
   const moreButton = document.getElementById("more");
@@ -33,7 +33,7 @@ function findPropertyInMap(type) {
   };
   const service = new google.maps.places.PlacesService(map);
   service.nearbySearch(
-    { location: { lat: 20.99, lng: 105.823 }, radius: 600, type },
+    { location: coordinatesOfMapCenter, radius: 2000, type },
     (results, status, pagination) => {
       if (status !== "OK") return;
       createMarkers(results, map, type);
@@ -69,6 +69,7 @@ function createMarkers(places, map, type) {
     markers.push(marker)
 
     const li = document.createElement("li");
+    li.title = place.name
     li.textContent = place.name;
     placesList.appendChild(li);
     bounds.extend(place.geometry.location);
