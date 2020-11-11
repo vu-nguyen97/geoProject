@@ -85,3 +85,58 @@ function clearMarkers(type) {
     markers[i].setMap(null);
   }
 }
+
+function getLocationOfUser() {
+  const gmnoprints = document.getElementsByClassName("gm-bundled-control-on-bottom")[0]
+  if (!gmnoprints) {
+    setTimeout(() => {
+      getLocationOfUser()
+    }, 500);
+  } else {
+    infoWindow = new google.maps.InfoWindow();
+    var locationButton = document.createElement("button");
+    var icon = document.createElement("i");
+    icon.classList.add('fas', 'fa-location')
+
+    locationButton.appendChild(icon);
+    locationButton.classList.add('cur-location-btn')
+    gmnoprints.appendChild(locationButton);
+
+    // map.controls[google.maps.ControlPosition.TOP_CENTER].push(node);
+    locationButton.addEventListener("click", () => {
+      locationButton.style.color = "#1976D2"
+      // Try HTML5 geolocation.
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            };
+            infoWindow.setPosition(pos);
+            infoWindow.setContent("Location found.");
+            infoWindow.open(map);
+            map.setCenter(pos);
+            map.setZoom(zoom)
+          },
+          () => {
+            handleLocationError(true, infoWindow, map.getCenter());
+          }
+        );
+      } else {
+        // Browser doesn't support Geolocation
+        handleLocationError(false, infoWindow, map.getCenter());
+      }
+    });
+  }
+}
+
+function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+  infoWindow.setPosition(pos);
+  infoWindow.setContent(
+    browserHasGeolocation
+      ? "Error: The Geolocation service failed."
+      : "Error: Your browser doesn't support geolocation."
+  );
+  infoWindow.open(map);
+}

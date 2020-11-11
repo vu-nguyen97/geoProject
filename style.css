@@ -175,3 +175,17 @@ li:nth-child(odd) {
   top: 10px;
   z-index: 5;
 }
+
+.cur-location-btn {
+  margin-top: -52px;
+  position: absolute;
+  height: 40px;
+  width: 40px;
+  background-color: white;
+  border: 0;
+}
+
+.panel {
+}
+.panel-btns {
+}
